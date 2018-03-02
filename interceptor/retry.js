@@ -29,12 +29,14 @@ module.exports = interceptor({
     config.initial = config.initial || 100
     config.multiplier = config.multiplier || 2
     config.max = config.max || Infinity
+    config.maxTries = config.maxTries || Infinity
     return config
   },
 
   error: function (response, config, meta) {
     var request = response.request
     request.retry = request.retry || config.initial
+    request.try = request.try || 0
 
     return delay(request.retry, request).then(function (request) {
       if (request.canceled) {
@@ -42,6 +44,11 @@ module.exports = interceptor({
         return Promise.reject({ request: request, error: 'precanceled' })
       }
       request.retry = Math.min(request.retry * config.multiplier, config.max)
+      request.try += 1
+      if (request.try >= config.maxTries) {
+        // cancel here if we have exceeded the maximum number of retries
+        return Promise.reject({ request: request, error: 'maxretries' })
+      }
       return meta.client(request)
     })
   }

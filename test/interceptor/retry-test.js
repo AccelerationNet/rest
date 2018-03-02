@@ -57,9 +57,34 @@
         return client({}).then(function (response) {
           var durration = Date.now() - start
           assert.equals(200, response.status.code)
+          assert.equals(20, response.request.retry)
           assert.equals(count, 4)
           assert(durration >= 40)
         })['catch'](fail)
+      },
+      'should only retry max times': function () {
+        var count = 0
+
+        var config = { initial: 10, multiplier: 1, max: 10, maxTries: 2 }
+        var client = retry(
+          function (request) {
+            count += 1
+            if (count === 4) {
+              return { request: request, status: { code: 200 } }
+            } else {
+              return when.reject({ request: request, error: 'Thrown by fake client' })
+            }
+          },
+          config
+        )
+
+        return client({}).then(
+          fail,
+          failOnThrow(function (response) {
+            assert.equals('maxretries', response.error)
+            assert.equals(count, 2)
+          })
+        )['catch'](fail)
       },
       'should not make propagate request if marked as canceled': function () {
         var parent = this.spy(function (request) {

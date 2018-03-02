@@ -797,6 +797,12 @@ Reattempts an errored request after a delay.  Attempts are scheduled after a fai
   <td>Infinity</td>
   <td>max delay in milliseconds</td>
 </tr>
+<tr>
+  <td>maxTries</td>
+  <td>optional</td>
+  <td>Infinity</td>
+  <td>max number of retries</td>
+</tr>
 </table>
 
 **Example**
