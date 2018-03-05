@@ -1127,6 +1127,7 @@ The interceptors provided with rest.js provide are also good examples.  Here are
 **Error Creators**
 
 - [rest/interceptor/errorCode](#module-rest/interceptor/errorCode)
+- [rest/interceptor/retry](#module-rest/interceptor/retry)
 - [rest/interceptor/timeout](#module-rest/interceptor/timeout)
 
 <a name="interceptor-custom-concepts-recovery"></a>
